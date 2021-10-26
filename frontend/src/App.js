@@ -5,16 +5,21 @@ import Homepage from './pages/Homepage'
 import AddQuestion from './pages/Add-Question'
 import useQuestions from './hooks/useQuestions'
 import Play from "./pages/Play";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {getQuestion} from "./service/devQuizApiService";
+import LoginPage from './pages/LoginPage'
+import {AuthContext} from "./context/AuthProvider";
+import PrivateRoute from "./routing/PrivateRoute";
 
 function App() {
 
     const {questions, saveQuestion} = useQuestions()
     const [playQuestion, setPlayQuestion] = useState()
+    const {token} = useContext(AuthContext)
+
 
     const getNextQuestion = () => {
-        getQuestion().then(result => {
+        getQuestion(token).then(result => {
             setPlayQuestion(result)
         })
     }
@@ -27,14 +32,17 @@ function App() {
         <div className="App">
             <Header/>
             <Switch>
-                <Route exact path="/">
+                <PrivateRoute exact path="/">
                     <Homepage questions={questions}/>
-                </Route>
-                <Route exact path="/add-question">
+                </PrivateRoute>
+                <PrivateRoute exact path="/add-question">
                     <AddQuestion saveQuestion={saveQuestion}/>
-                </Route>
-                <Route path="/play">
+                </PrivateRoute>
+                <PrivateRoute path="/play">
                     {playQuestion && <Play question={playQuestion} playNext={getNextQuestion}/>}
+                </PrivateRoute>
+                <Route exact path="/login">
+                    <LoginPage/>
                 </Route>
             </Switch>
         </div>

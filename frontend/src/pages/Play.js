@@ -3,7 +3,8 @@ import Question from "../components/Question";
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import {checkAnswer} from "../service/devQuizApiService";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {AuthContext} from "../context/AuthProvider";
 
 Play.propTypes = {
     question: PropTypes.object
@@ -12,11 +13,12 @@ Play.propTypes = {
 export default function Play({question, playNext}) {
 
 const [answerIsCorrect, setAnswerIsCorrect] = useState();
+const {token} = useContext(AuthContext);
 
 const resetAnswers = () => setAnswerIsCorrect();
 
 const checkIfCorrect = (question, chosenId) => {
-    checkAnswer(question, chosenId).then((data) => setAnswerIsCorrect(data))
+    checkAnswer(question, chosenId, token).then((data) => setAnswerIsCorrect(data))
 }
 
     return (
